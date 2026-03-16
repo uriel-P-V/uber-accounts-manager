@@ -1,4 +1,4 @@
-const CACHE_NAME = "uber-app-{{VERSION}}"
+const CACHE_NAME = "uber-app-{{VERSION}} + 3"
 const STATIC_FILES = ["/", "/index.html", "/edit.html", "/style.css", "/app.js", "/icon.png"]
 
 self.addEventListener("install", event => {
