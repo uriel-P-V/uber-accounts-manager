@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="UberAccounts">
+<link rel="apple-touch-icon" href="/icon.png">
+<title>Uber Accounts Manager</title>
+
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="/manifest.json">
+
+</head>
+
+<body>
+
+<div id="stats"></div>
+
+<h1>Uber Accounts Manager</h1>
+
+
+<div class="filters">
+
+<input type="number" id="minPedidos" placeholder="Pedidos mínimos">
+
+<input type="number" id="minReembolsos" placeholder="Reembolsos mínimos">
+
+<select id="ordenar">
+<option value="">Ordenar</option>
+<option value="pedidos">Más pedidos</option>
+<option value="reembolsos">Más reembolsos</option>
+<option value="expira">Expira antes</option>
+</select>
+
+<input type="text" id="search" placeholder="Buscar por email">
+
+<select id="uberFilter">
+<option value="">Uber One</option>
+<option value="activo">Activo</option>
+<option value="sin">Sin Uber One</option>
+</select>
+
+<button onclick="loadAccounts()">Buscar</button>
+
+</div>
+
+<h2>Agregar Cuenta</h2>
+
+<div class="form">
+
+<input id="email" placeholder="Email">
+
+<input id="pedidos" type="number" placeholder="Pedidos">
+
+<input id="reembolsos" type="number" placeholder="Reembolsos">
+
+<input id="uberOne" type="date">
+
+<input id="tarjetas" placeholder="Tarjetas">
+
+<button onclick="addAccount()">Guardar</button>
+
+</div>
+
+
+<table>
+
+<thead>
+<tr>
+<th>⭐</th>
+<th>Email</th>
+<th>Pedidos</th>
+<th>Reembolsos</th>
+<th>Ratio</th>
+<th>Uber One</th>
+<th>Tarjetas</th>
+<th>Acciones</th>
+
+</tr>
+</thead>
+
+<tbody id="accountsTable">
+</tbody>
+
+</table>
+
+<script src="app.js"></script>
+
+</body>
+</html>
