@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0a0a0f">
+  <meta name="theme-color" content="#080810">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="UberAccounts">
@@ -11,17 +11,20 @@
   <title>Uber Accounts Manager</title>
   <link rel="stylesheet" href="style.css">
   <link rel="manifest" href="/manifest.json">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-
-  <div class="bg-grid"></div>
+  <div class="bg-noise"></div>
+  <div class="bg-glow"></div>
 
   <header>
     <div class="header-inner">
       <div class="logo">
-        <span class="logo-icon">⬡</span>
-        <span class="logo-text">Uber<b>Accounts</b></span>
+        <div class="logo-mark">U</div>
+        <div class="logo-info">
+          <span class="logo-title">UberAccounts</span>
+          <span class="logo-sub">Manager</span>
+        </div>
       </div>
       <div id="stats" class="stats-bar"></div>
     </div>
@@ -30,50 +33,100 @@
   <main>
 
     <!-- FILTROS -->
-    <section class="card filters-card">
-      <div class="card-label">FILTROS</div>
-      <div class="filters-grid">
-        <input type="text" id="search" placeholder="Buscar por email…">
-        <select id="uberFilter">
-          <option value="">Uber One: todos</option>
-          <option value="activo">Activo</option>
-          <option value="sin">Sin Uber One</option>
-        </select>
-        <input type="number" id="minPedidos" placeholder="Pedidos mín.">
-        <input type="number" id="minReembolsos" placeholder="Reembolsos mín.">
-        <select id="ordenar">
-          <option value="">Ordenar por…</option>
-          <option value="pedidos">Más pedidos</option>
-          <option value="reembolsos">Más reembolsos</option>
-          <option value="expira">Expira antes</option>
-        </select>
-        <button class="btn-primary" onclick="loadAccounts()">Buscar</button>
+    <section class="card" id="section-filters">
+      <div class="section-header" onclick="toggleSection('filters')">
+        <span class="section-title">🔍 Filtros</span>
+        <button class="btn-collapse" id="arrow-filters">▲</button>
+      </div>
+      <div class="section-body" id="body-filters">
+        <div class="search-wrap">
+          <span class="search-icon">⌕</span>
+          <input type="text" id="search" placeholder="Buscar por email…" oninput="loadAccounts()">
+        </div>
+        <div class="filter-chips">
+          <span class="chip-label">Uber One</span>
+          <button class="chip active" data-filter="" onclick="setChip(this)">Todos</button>
+          <button class="chip" data-filter="activo" onclick="setChip(this)">✓ Activo</button>
+          <button class="chip" data-filter="sin" onclick="setChip(this)">✗ Sin Uber One</button>
+          <button class="chip" data-filter="expirando" onclick="setChip(this)">⚠ Expirando pronto</button>
+        </div>
+        <div class="filter-row">
+          <div class="field-sm">
+            <label>Pedidos mín.</label>
+            <input type="number" id="minPedidos" placeholder="0" oninput="loadAccounts()">
+          </div>
+          <div class="field-sm">
+            <label>Reembolsos mín.</label>
+            <input type="number" id="minReembolsos" placeholder="0" oninput="loadAccounts()">
+          </div>
+          <div class="field-sm">
+            <label>Ordenar por</label>
+            <select id="ordenar" onchange="loadAccounts()">
+              <option value="">Sin orden</option>
+              <option value="estrella">⭐ Favoritos primero</option>
+              <option value="pedidos">Más pedidos</option>
+              <option value="reembolsos">Más reembolsos</option>
+              <option value="expira">Expira antes</option>
+              <option value="ratio">Mayor ratio</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn-ghost-sm" onclick="resetFilters()">↺ Limpiar filtros</button>
       </div>
     </section>
 
-    <!-- AGREGAR CUENTA -->
-    <section class="card form-card">
-      <div class="card-label">NUEVA CUENTA</div>
-      <div class="form-grid">
-        <input id="email" placeholder="Email" class="span-2">
-        <input id="pedidos" type="number" placeholder="Pedidos">
-        <input id="reembolsos" type="number" placeholder="Reembolsos">
-        <input id="uberOne" type="date" placeholder="Uber One expira">
-        <input id="tarjetas" placeholder="Tarjetas">
-        <button class="btn-accent span-2" onclick="addAccount()">＋ Guardar cuenta</button>
+    <!-- NUEVA CUENTA -->
+    <section class="card" id="section-form">
+      <div class="section-header" onclick="toggleSection('form')">
+        <span class="section-title">➕ Nueva cuenta</span>
+        <button class="btn-collapse" id="arrow-form">▼</button>
+      </div>
+      <div class="section-body hidden" id="body-form">
+        <div class="form-grid">
+          <div class="field span-2">
+            <label>Email</label>
+            <input id="email" placeholder="cuenta@ejemplo.com" type="email">
+          </div>
+          <div class="field">
+            <label>Pedidos</label>
+            <input id="pedidos" type="number" placeholder="0" min="0">
+          </div>
+          <div class="field">
+            <label>Reembolsos</label>
+            <input id="reembolsos" type="number" placeholder="0" min="0">
+          </div>
+          <div class="field">
+            <label>Uber One expira</label>
+            <input id="uberOne" type="date">
+          </div>
+          <div class="field">
+            <label>Tarjetas</label>
+            <input id="tarjetas" placeholder="Ej: 4311, 7297">
+          </div>
+          <button class="btn-accent span-2" onclick="addAccount()">＋ Guardar cuenta</button>
+        </div>
       </div>
     </section>
 
-    <!-- TABLA -->
-    <section class="card table-card">
-      <div class="card-label">CUENTAS</div>
-      <div class="table-wrap">
+    <!-- CUENTAS -->
+    <section class="card">
+      <div class="section-header no-click">
+        <span class="section-title">📋 Cuentas <span id="count-badge" class="count-badge">0</span></span>
+        <div class="view-toggle">
+          <button id="btn-cards" class="view-btn active" onclick="setView('cards')" title="Vista tarjetas">⊞</button>
+          <button id="btn-table" class="view-btn" onclick="setView('table')" title="Vista tabla">☰</button>
+        </div>
+      </div>
+
+      <div id="view-cards" class="accounts-grid"></div>
+
+      <div id="view-table" class="table-wrap hidden">
         <table>
           <thead>
             <tr>
               <th>⭐</th>
               <th>Email</th>
-              <th>asdasdasdsad</th>
+              <th>Pedidos</th>
               <th>Reembolsos</th>
               <th>Ratio</th>
               <th>Uber One</th>
@@ -86,17 +139,21 @@
       </div>
     </section>
 
-    <!-- BOTON TEST WHATSAPP -->
-    <section class="card test-card">
-      <div class="card-label">PRUEBAS</div>
+    <!-- WHATSAPP TEST -->
+    <section class="card card-wa">
       <button class="btn-whatsapp" onclick="testWhatsApp()">
-        <span>📲</span> Enviar mensaje de prueba a WhatsApp
+        <span class="wa-icon">📲</span>
+        <div>
+          <div class="wa-title">Probar notificación WhatsApp</div>
+          <div class="wa-sub">Envía un mensaje de prueba vía CallMeBot</div>
+        </div>
+        <span class="wa-arrow">→</span>
       </button>
-      <p class="test-hint">Manda un mensaje de prueba al número configurado en CallMeBot</p>
     </section>
 
   </main>
 
+  <input type="hidden" id="uberFilter" value="">
   <script src="app.js"></script>
 </body>
 </html>

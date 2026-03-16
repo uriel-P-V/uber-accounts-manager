@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080810">
+  <title>Editar Cuenta — UberAccounts</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="bg-noise"></div>
+  <div class="bg-glow"></div>
+
+  <header>
+    <div class="header-inner">
+      <a href="/" class="btn-back">← Volver</a>
+      <div class="logo">
+        <div class="logo-mark">U</div>
+        <div class="logo-info">
+          <span class="logo-title">Editar cuenta</span>
+          <span class="logo-sub" id="edit-email-header">—</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="edit-main">
+    <section class="card edit-card">
+      <div class="section-title" style="margin-bottom:24px">✏️ Datos de la cuenta</div>
+
+      <div class="form-grid">
+        <div class="field span-2">
+          <label>Email</label>
+          <input id="edit-email" type="email" placeholder="cuenta@ejemplo.com">
+        </div>
+        <div class="field">
+          <label>Pedidos</label>
+          <input id="edit-pedidos" type="number" min="0" placeholder="0">
+        </div>
+        <div class="field">
+          <label>Reembolsos</label>
+          <input id="edit-reembolsos" type="number" min="0" placeholder="0">
+        </div>
+        <div class="field span-2">
+          <label>Uber One — fecha de expiración</label>
+          <input id="edit-uberOne" type="date">
+          <button class="btn-ghost-sm" style="margin-top:8px" onclick="clearUberOne()">✕ Sin Uber One</button>
+        </div>
+        <div class="field span-2">
+          <label>Tarjetas</label>
+          <input id="edit-tarjetas" placeholder="Ej: 4311, 7297, Mastercard 9928">
+        </div>
+      </div>
+
+      <div class="edit-actions">
+        <button class="btn-accent" onclick="saveEdit()">💾 Guardar cambios</button>
+        <button class="btn-danger" onclick="confirmDelete()">🗑 Eliminar cuenta</button>
+      </div>
+
+      <div id="edit-feedback" class="edit-feedback hidden"></div>
+    </section>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(window.location.search)
+    const id = params.get("id")
+
+    if (!id) window.location.href = "/"
+
+    async function loadAccount() {
+      const res = await fetch("/accounts")
+      const all = await res.json()
+      const acc = all.find(a => String(a.id) === String(id))
+      if (!acc) { window.location.href = "/"; return }
+
+      document.getElementById("edit-email-header").textContent = acc.email
+      document.getElementById("edit-email").value = acc.email
+      document.getElementById("edit-pedidos").value = acc.pedidos
+      document.getElementById("edit-reembolsos").value = acc.reembolsos
+      document.getElementById("edit-uberOne").value = acc.uber_one_expira ?? ""
+      document.getElementById("edit-tarjetas").value = acc.tarjetas ?? ""
+    }
+
+    function clearUberOne() {
+      document.getElementById("edit-uberOne").value = ""
+    }
+
+    async function saveEdit() {
+      const btn = document.querySelector(".btn-accent")
+      btn.textContent = "Guardando…"
+      btn.disabled = true
+
+      const body = {
+        email: document.getElementById("edit-email").value,
+        pedidos: parseInt(document.getElementById("edit-pedidos").value) || 0,
+        reembolsos: parseInt(document.getElementById("edit-reembolsos").value) || 0,
+        uber_one_expira: document.getElementById("edit-uberOne").value || null,
+        tarjetas: document.getElementById("edit-tarjetas").value
+      }
+
+      await fetch("/accounts/" + id, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      })
+
+      showFeedback("✅ Cambios guardados correctamente", "success")
+      btn.textContent = "💾 Guardar cambios"
+      btn.disabled = false
+
+      setTimeout(() => window.location.href = "/", 1200)
+    }
+
+    async function confirmDelete() {
+      if (!confirm("¿Eliminar esta cuenta? Esta acción no se puede deshacer.")) return
+      await fetch("/accounts/" + id, { method: "DELETE" })
+      window.location.href = "/"
+    }
+
+    function showFeedback(msg, type) {
+      const el = document.getElementById("edit-feedback")
+      el.textContent = msg
+      el.className = "edit-feedback " + type
+    }
+
+    loadAccount()
+  </script>
+</body>
+</html>

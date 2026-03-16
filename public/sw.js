@@ -1,6 +1,5 @@
-// sw.js
-const CACHE_NAME = "uber-app-" + "{{VERSION}}"
-const STATIC_FILES = ["/", "/index.html", "/style.css", "/app.js", "/icon.png"]
+const CACHE_NAME = "uber-app-{{VERSION}}"
+const STATIC_FILES = ["/", "/index.html", "/edit.html", "/style.css", "/app.js", "/icon.png"]
 
 self.addEventListener("install", event => {
   event.waitUntil(
@@ -19,7 +18,11 @@ self.addEventListener("activate", event => {
 })
 
 self.addEventListener("fetch", event => {
-  if (event.request.url.includes("/accounts") || event.request.url.includes("/test-whatsapp")) return
+  if (
+    event.request.url.includes("/accounts") ||
+    event.request.url.includes("/test-whatsapp")
+  ) return
+
   event.respondWith(
     caches.match(event.request).then(r => r || fetch(event.request))
   )

@@ -1,17 +1,27 @@
 const express = require("express")
 const cors = require("cors")
+const fs = require("fs")
 const db = require("./db/client")
 const sendWhatsApp = require("./scheduler/whatsapp")
 require("dotenv").config()
 require("./scheduler/reminders")
 
-const fs = require("fs")
-
 const app = express()
 app.use(cors())
 app.use(express.json())
+
+// Servir SW con versión dinámica para auto-invalidar cache
+app.get("/sw.js", (req, res) => {
+  let sw = fs.readFileSync("./public/sw.js", "utf8")
+  sw = sw.replace("{{VERSION}}", Date.now().toString())
+  res.setHeader("Content-Type", "application/javascript")
+  res.setHeader("Cache-Control", "no-cache")
+  res.send(sw)
+})
+
 app.use(express.static("public"))
 
+// GET todas las cuentas
 app.get("/accounts", async (req, res) => {
   try {
     const result = await db.execute("SELECT * FROM accounts")
@@ -21,6 +31,7 @@ app.get("/accounts", async (req, res) => {
   }
 })
 
+// POST nueva cuenta
 app.post("/accounts", async (req, res) => {
   const { email, pedidos, reembolsos, uber_one_expira, tarjetas } = req.body
   await db.execute({
@@ -31,6 +42,19 @@ app.post("/accounts", async (req, res) => {
   res.send("Cuenta agregada")
 })
 
+// PUT editar cuenta
+app.put("/accounts/:id", async (req, res) => {
+  const { email, pedidos, reembolsos, uber_one_expira, tarjetas } = req.body
+  await db.execute({
+    sql: `UPDATE accounts
+          SET email=?, pedidos=?, reembolsos=?, uber_one_expira=?, tarjetas=?
+          WHERE id=?`,
+    args: [email, pedidos, reembolsos, uber_one_expira || null, tarjetas, req.params.id]
+  })
+  res.send("Cuenta actualizada")
+})
+
+// POST toggle estrella
 app.post("/accounts/star", async (req, res) => {
   const { id, estrella } = req.body
   await db.execute({
@@ -40,6 +64,7 @@ app.post("/accounts/star", async (req, res) => {
   res.send("ok")
 })
 
+// DELETE cuenta
 app.delete("/accounts/:id", async (req, res) => {
   await db.execute({
     sql: "DELETE FROM accounts WHERE id = ?",
@@ -48,10 +73,10 @@ app.delete("/accounts/:id", async (req, res) => {
   res.send("Cuenta eliminada")
 })
 
-// Ruta de prueba WhatsApp
+// GET prueba WhatsApp
 app.get("/test-whatsapp", async (req, res) => {
   try {
-    await sendWhatsApp("✅ Prueba desde Uber Accounts Manager — todo funciona correctamente")
+    await sendWhatsApp("✅ Prueba desde Uber Accounts Manager — notificaciones funcionando")
     res.json({ ok: true })
   } catch (err) {
     res.json({ ok: false, error: err.message })
@@ -60,12 +85,3 @@ app.get("/test-whatsapp", async (req, res) => {
 
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => console.log(`Servidor en puerto ${PORT}`))
-
-app.get("/sw.js", (req, res) => {
-  const version = Date.now().toString()
-  let sw = fs.readFileSync("./public/sw.js", "utf8")
-  sw = sw.replace("{{VERSION}}", version)
-  res.setHeader("Content-Type", "application/javascript")
-  res.setHeader("Cache-Control", "no-cache")
-  res.send(sw)
-})
