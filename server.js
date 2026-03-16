@@ -5,6 +5,8 @@ const sendWhatsApp = require("./scheduler/whatsapp")
 require("dotenv").config()
 require("./scheduler/reminders")
 
+const fs = require("fs")
+
 const app = express()
 app.use(cors())
 app.use(express.json())
@@ -58,3 +60,12 @@ app.get("/test-whatsapp", async (req, res) => {
 
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => console.log(`Servidor en puerto ${PORT}`))
+
+app.get("/sw.js", (req, res) => {
+  const version = Date.now().toString()
+  let sw = fs.readFileSync("./public/sw.js", "utf8")
+  sw = sw.replace("{{VERSION}}", version)
+  res.setHeader("Content-Type", "application/javascript")
+  res.setHeader("Cache-Control", "no-cache")
+  res.send(sw)
+})
