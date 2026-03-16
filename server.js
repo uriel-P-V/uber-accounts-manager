@@ -1,6 +1,7 @@
 const express = require("express")
 const cors = require("cors")
 const db = require("./db/client")
+const sendWhatsApp = require("./scheduler/whatsapp")
 require("dotenv").config()
 require("./scheduler/reminders")
 
@@ -43,6 +44,16 @@ app.delete("/accounts/:id", async (req, res) => {
     args: [req.params.id]
   })
   res.send("Cuenta eliminada")
+})
+
+// Ruta de prueba WhatsApp
+app.get("/test-whatsapp", async (req, res) => {
+  try {
+    await sendWhatsApp("✅ Prueba desde Uber Accounts Manager — todo funciona correctamente")
+    res.json({ ok: true })
+  } catch (err) {
+    res.json({ ok: false, error: err.message })
+  }
 })
 
 const PORT = process.env.PORT || 3000

@@ -1,94 +1,102 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="es">
 <head>
-
-<meta charset="UTF-8">
-<meta name="theme-color" content="#000000">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="UberAccounts">
-<link rel="apple-touch-icon" href="/icon.png">
-<title>Uber Accounts Manager</title>
-
-<link rel="stylesheet" href="style.css">
-<link rel="manifest" href="/manifest.json">
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a0a0f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="UberAccounts">
+  <link rel="apple-touch-icon" href="/icon.png">
+  <title>Uber Accounts Manager</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="/manifest.json">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
-
 <body>
 
-<div id="stats"></div>
+  <div class="bg-grid"></div>
 
-<h1>Uber Accounts Manager</h1>
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">⬡</span>
+        <span class="logo-text">Uber<b>Accounts</b></span>
+      </div>
+      <div id="stats" class="stats-bar"></div>
+    </div>
+  </header>
 
+  <main>
 
-<div class="filters">
+    <!-- FILTROS -->
+    <section class="card filters-card">
+      <div class="card-label">FILTROS</div>
+      <div class="filters-grid">
+        <input type="text" id="search" placeholder="Buscar por email…">
+        <select id="uberFilter">
+          <option value="">Uber One: todos</option>
+          <option value="activo">Activo</option>
+          <option value="sin">Sin Uber One</option>
+        </select>
+        <input type="number" id="minPedidos" placeholder="Pedidos mín.">
+        <input type="number" id="minReembolsos" placeholder="Reembolsos mín.">
+        <select id="ordenar">
+          <option value="">Ordenar por…</option>
+          <option value="pedidos">Más pedidos</option>
+          <option value="reembolsos">Más reembolsos</option>
+          <option value="expira">Expira antes</option>
+        </select>
+        <button class="btn-primary" onclick="loadAccounts()">Buscar</button>
+      </div>
+    </section>
 
-<input type="number" id="minPedidos" placeholder="Pedidos mínimos">
+    <!-- AGREGAR CUENTA -->
+    <section class="card form-card">
+      <div class="card-label">NUEVA CUENTA</div>
+      <div class="form-grid">
+        <input id="email" placeholder="Email" class="span-2">
+        <input id="pedidos" type="number" placeholder="Pedidos">
+        <input id="reembolsos" type="number" placeholder="Reembolsos">
+        <input id="uberOne" type="date" placeholder="Uber One expira">
+        <input id="tarjetas" placeholder="Tarjetas">
+        <button class="btn-accent span-2" onclick="addAccount()">＋ Guardar cuenta</button>
+      </div>
+    </section>
 
-<input type="number" id="minReembolsos" placeholder="Reembolsos mínimos">
+    <!-- TABLA -->
+    <section class="card table-card">
+      <div class="card-label">CUENTAS</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>⭐</th>
+              <th>Email</th>
+              <th>Pedidos</th>
+              <th>Reembolsos</th>
+              <th>Ratio</th>
+              <th>Uber One</th>
+              <th>Tarjetas</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="accountsTable"></tbody>
+        </table>
+      </div>
+    </section>
 
-<select id="ordenar">
-<option value="">Ordenar</option>
-<option value="pedidos">Más pedidos</option>
-<option value="reembolsos">Más reembolsos</option>
-<option value="expira">Expira antes</option>
-</select>
+    <!-- BOTON TEST WHATSAPP -->
+    <section class="card test-card">
+      <div class="card-label">PRUEBAS</div>
+      <button class="btn-whatsapp" onclick="testWhatsApp()">
+        <span>📲</span> Enviar mensaje de prueba a WhatsApp
+      </button>
+      <p class="test-hint">Manda un mensaje de prueba al número configurado en CallMeBot</p>
+    </section>
 
-<input type="text" id="search" placeholder="Buscar por email">
+  </main>
 
-<select id="uberFilter">
-<option value="">Uber One</option>
-<option value="activo">Activo</option>
-<option value="sin">Sin Uber One</option>
-</select>
-
-<button onclick="loadAccounts()">Buscar</button>
-
-</div>
-
-<h2>Agregar Cuenta</h2>
-
-<div class="form">
-
-<input id="email" placeholder="Email">
-
-<input id="pedidos" type="number" placeholder="Pedidos">
-
-<input id="reembolsos" type="number" placeholder="Reembolsos">
-
-<input id="uberOne" type="date">
-
-<input id="tarjetas" placeholder="Tarjetas">
-
-<button onclick="addAccount()">Guardar</button>
-
-</div>
-
-
-<table>
-
-<thead>
-<tr>
-<th>⭐</th>
-<th>Email</th>
-<th>Pedidos</th>
-<th>Reembolsos</th>
-<th>Ratio</th>
-<th>Uber One</th>
-<th>Tarjetas</th>
-<th>Acciones</th>
-
-</tr>
-</thead>
-
-<tbody id="accountsTable">
-</tbody>
-
-</table>
-
-<script src="app.js"></script>
-
+  <script src="app.js"></script>
 </body>
 </html>
