@@ -136,7 +136,7 @@ async function loadAccounts() {
         <div>${uberBadge(acc.uber_one_expira)}</div>
         ${acc.tarjetas ? `<div class="acc-tarjetas">💳 ${acc.tarjetas}</div>` : ""}
         <div class="acc-actions">
-          <button class="btn-edit" onclick="window.location.href='/edit.html?id=${acc.id}'">✏️ Editar</button>
+          <button class="btn-edit" onclick="window.location.href='/Edit.html?id=${acc.id}'">✏️ Editar</button>
           <button class="btn-delete-sm" onclick="deleteAccount(${acc.id})">🗑</button>
         </div>
       `
