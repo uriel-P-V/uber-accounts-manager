@@ -52,6 +52,11 @@
           <input id="edit-tarjetas" placeholder="Ej: 4311, 7297, Mastercard 9928">
         </div>
       </div>
+      
+      <div class="field span-2">
+        <label>Notas</label>
+        <textarea id="edit-notas" placeholder="Ej: celular de mamá, PC trabajo…" rows="3"></textarea>
+      </div>
 
       <div class="edit-actions">
         <button class="btn-accent" onclick="saveEdit()">💾 Guardar cambios</button>
@@ -80,6 +85,7 @@
       document.getElementById("edit-reembolsos").value = acc.reembolsos
       document.getElementById("edit-uberOne").value = acc.uber_one_expira ?? ""
       document.getElementById("edit-tarjetas").value = acc.tarjetas ?? ""
+      document.getElementById("edit-notas").value = acc.notas ?? ""
     }
 
     function clearUberOne() {
@@ -96,7 +102,8 @@
         pedidos: parseInt(document.getElementById("edit-pedidos").value) || 0,
         reembolsos: parseInt(document.getElementById("edit-reembolsos").value) || 0,
         uber_one_expira: document.getElementById("edit-uberOne").value || null,
-        tarjetas: document.getElementById("edit-tarjetas").value
+        tarjetas: document.getElementById("edit-tarjetas").value,
+        notas: document.getElementById("edit-notas").value || null
       }
 
       await fetch("/accounts/" + id, {

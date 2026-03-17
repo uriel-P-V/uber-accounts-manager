@@ -135,6 +135,7 @@ async function loadAccounts() {
         </div>
         <div>${uberBadge(acc.uber_one_expira)}</div>
         ${acc.tarjetas ? `<div class="acc-tarjetas">💳 ${acc.tarjetas}</div>` : ""}
+        ${acc.notas ? `<div class="acc-notas">📝 ${acc.notas}</div>` : ""}
         <div class="acc-actions">
           <button class="btn-edit" onclick="window.location.href='/Edit.html?id=${acc.id}'">✏️ Editar</button>
           <button class="btn-delete-sm" onclick="deleteAccount(${acc.id})">🗑</button>
@@ -190,7 +191,8 @@ async function addAccount() {
       pedidos: parseInt(document.getElementById("pedidos").value) || 0,
       reembolsos: parseInt(document.getElementById("reembolsos").value) || 0,
       uber_one_expira: document.getElementById("uberOne").value || null,
-      tarjetas: document.getElementById("tarjetas").value
+      tarjetas: document.getElementById("tarjetas").value,
+      notas: document.getElementById("notas").value || null
     })
   })
 
@@ -199,6 +201,7 @@ async function addAccount() {
   document.getElementById("reembolsos").value = ""
   document.getElementById("uberOne").value = ""
   document.getElementById("tarjetas").value = ""
+  document.getElementById("notas").value = ""
 
   btn.textContent = "＋ Guardar cuenta"
   btn.disabled = false

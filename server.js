@@ -33,23 +33,22 @@ app.get("/accounts", async (req, res) => {
 
 // POST nueva cuenta
 app.post("/accounts", async (req, res) => {
-  const { email, pedidos, reembolsos, uber_one_expira, tarjetas } = req.body
+  const { email, pedidos, reembolsos, uber_one_expira, tarjetas, notas } = req.body
   await db.execute({
-    sql: `INSERT INTO accounts (email, pedidos, reembolsos, uber_one_expira, tarjetas)
-          VALUES (?, ?, ?, ?, ?)`,
-    args: [email, pedidos, reembolsos, uber_one_expira || null, tarjetas]
+    sql: `INSERT INTO accounts (email, pedidos, reembolsos, uber_one_expira, tarjetas, notas)
+          VALUES (?, ?, ?, ?, ?, ?)`,
+    args: [email, pedidos, reembolsos, uber_one_expira || null, tarjetas, notas || null]
   })
   res.send("Cuenta agregada")
 })
 
 // PUT editar cuenta
 app.put("/accounts/:id", async (req, res) => {
-  const { email, pedidos, reembolsos, uber_one_expira, tarjetas } = req.body
+  const { email, pedidos, reembolsos, uber_one_expira, tarjetas, notas } = req.body
   await db.execute({
-    sql: `UPDATE accounts
-          SET email=?, pedidos=?, reembolsos=?, uber_one_expira=?, tarjetas=?
+    sql: `UPDATE accounts SET email=?, pedidos=?, reembolsos=?, uber_one_expira=?, tarjetas=?, notas=?
           WHERE id=?`,
-    args: [email, pedidos, reembolsos, uber_one_expira || null, tarjetas, req.params.id]
+    args: [email, pedidos, reembolsos, uber_one_expira || null, tarjetas, notas || null, req.params.id]
   })
   res.send("Cuenta actualizada")
 })
@@ -82,6 +81,7 @@ app.get("/test-whatsapp", async (req, res) => {
     res.json({ ok: false, error: err.message })
   }
 })
+
 
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => console.log(`Servidor en puerto ${PORT}`))
